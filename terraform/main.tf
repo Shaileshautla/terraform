@@ -2,18 +2,28 @@ provider "aws" {
   region = var.region
 }
 
-# Use an existing default VPC
+# Use the existing VPC by ID
 data "aws_vpc" "default" {
   id = "vpc-067449f8314d4e6c0"
 }
 
-data "aws_subnet_ids" "default" {
-  vpc_id = data.aws_vpc.default.id
+# Find the default subnet within that VPC
+data "aws_subnet" "default" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.default.id]
+  }
+
+  filter {
+    name   = "default-for-az"
+    values = ["true"]
+  }
 }
 
+# Security group for SSH, HTTP, and Node Exporter
 resource "aws_security_group" "ssh_http" {
   name        = "allow_ssh_http"
-  description = "Allow SSH and HTTP"
+  description = "Allow SSH, HTTP, and Node Exporter"
   vpc_id      = data.aws_vpc.default.id
 
   ingress {
@@ -45,11 +55,12 @@ resource "aws_security_group" "ssh_http" {
   }
 }
 
+# EC2 instance using existing VPC + subnet
 resource "aws_instance" "web" {
   ami                         = var.ami
   instance_type               = var.instance_type
   key_name                    = var.key_name
-  subnet_id                   = tolist(data.aws_subnet_ids.default.ids)[0]
+  subnet_id                   = data.aws_subnet.default.id
   vpc_security_group_ids      = [aws_security_group.ssh_http.id]
   associate_public_ip_address = true
 
