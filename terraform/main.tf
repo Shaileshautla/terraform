@@ -1,4 +1,4 @@
-##provider "aws" {
+aaa##provider "aws" {
   region = var.region
 }
 
