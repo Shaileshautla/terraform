@@ -1,0 +1,22 @@
+- hosts: web
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install NGINX
+      apt:
+        name: nginx
+        state: present
+
+    - name: Install Node Exporter
+      shell: |
+        wget https://github.com/prometheus/node_exporter/releases/download/v1.8.1/node_exporter-1.8.1.linux-amd64.tar.gz
+        tar -xvf node_exporter-1.8.1.linux-amd64.tar.gz
+        sudo cp node_exporter-1.8.1.linux-amd64/node_exporter /usr/local/bin/
+        sudo useradd -rs /bin/false node_exporter || true
+        echo "[Unit]\nDescription=Node Exporter\n\n[Service]\nUser=node_exporter\nExecStart=/usr/local/bin/node_exporter\n\n[Install]\nWantedBy=default.target" | sudo tee /etc/systemd/system/node_exporter.service
+        sudo systemctl daemon-reexec
+        sudo systemctl enable node_exporter
+        sudo systemctl start node_exporter
