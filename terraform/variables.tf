@@ -11,9 +11,9 @@ variable "instance_type" {
 }
 
 variable "key_name" {
-  default = "test.pem"
+  default = "test" # actual key name created in AWS, no .pem extension
 }
 
 variable "private_key_path" {
-  default = "~/.ssh/test.pem"
+  default = "~/.ssh/test.pem" # path where GitHub Actions writes the secret key
 }
