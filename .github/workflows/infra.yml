@@ -35,11 +35,12 @@ jobs:
       run: |
         echo "::set-output name=instance_ip::$(terraform output -raw instance_ip)"
 
-    - name: Create Ansible Inventory
-      run: |
-        INSTANCE_IP=$(terraform -chdir=terraform output -raw instance_ip)
-        echo "[web]" > ansible/inventory.ini
-        echo "$INSTANCE_IP ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/test.pem" >> ansible/inventory.ini
+- name: Create Ansible Inventory
+  run: |
+    INSTANCE_IP=$(terraform -chdir=terraform output -raw instance_ip)
+    echo "[web]" > ansible/inventory.ini
+    echo "$INSTANCE_IP ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/test.pem" >> ansible/inventory.ini
+    cat ansible/inventory.ini
 
     - name: Copy SSH key
       run: |
