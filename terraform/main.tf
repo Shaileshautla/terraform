@@ -22,7 +22,7 @@ data "aws_subnet" "default" {
 
 # Security group for SSH, HTTP, and Node Exporter
 resource "aws_security_group" "ssh_http" {
-  name        = "allow_ssh_http1"
+  name        = "allow_ssh_http2"
   description = "Allow SSH, HTTP, and Node Exporter"
   vpc_id      = data.aws_vpc.default.id
 
@@ -65,7 +65,7 @@ resource "aws_instance" "web" {
   associate_public_ip_address = true
 
   tags = {
-    Name = "test"
+    Name = "test1"
   }
 
   provisioner "local-exec" {
