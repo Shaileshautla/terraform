@@ -29,20 +29,21 @@ jobs:
       working-directory: ./terraform
       run: terraform apply -auto-approve
 
-    - name: Extract instance IP
-      id: ip
-      working-directory: ./terraform
+    - name: Extract instance IP safely
       run: |
-        IP=$(terraform output -raw instance_ip)
-        echo "INSTANCE_IP=$IP" >> $GITHUB_ENV
-        echo "$IP ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/test.pem" > ../ansible/inventory.ini
+        terraform output -raw instance_ip > instance_ip.txt
+        echo "INSTANCE_IP=$(cat instance_ip.txt)" >> $GITHUB_ENV
+
+    - name: Create Ansible Inventory
+      run: |
+        echo "[web]" > ansible/inventory.ini
+        echo "$INSTANCE_IP ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/test.pem" >> ansible/inventory.ini
 
     - name: Copy SSH key
       run: |
         mkdir -p ~/.ssh
         echo "${{ secrets.ANSIBLE_PRIVATE_KEY }}" > ~/.ssh/test.pem
         chmod 600 ~/.ssh/test.pem
-
 
     - name: Install Ansible
       run: |
@@ -52,4 +53,3 @@ jobs:
     - name: Run Ansible Playbook
       run: |
         ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ansible/inventory.ini ansible/playbook.yml
-
