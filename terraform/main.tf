@@ -20,7 +20,6 @@ data "aws_subnet" "default" {
   }
 }
 
-
 # Security group for SSH, HTTP, and Node Exporter
 resource "aws_security_group" "ssh_http" {
   name        = "allow_ssh_http"
@@ -71,11 +70,5 @@ resource "aws_instance" "web" {
 
   provisioner "local-exec" {
     command = "echo ${self.public_ip} > ../ansible/hosts_ip.txt"
-  }
-
-  connection {
-    type        = "ssh"
-    user        = "ubuntu"
-    host        = self.public_ip
   }
 }
