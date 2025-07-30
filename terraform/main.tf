@@ -10,15 +10,16 @@ data "aws_vpc" "default" {
 # Find the default subnet within that VPC
 data "aws_subnet" "default" {
   filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.default.id]
+    name   = "tag:Name"
+    values = ["default"]
   }
 
   filter {
-    name   = "default-for-az"
-    values = ["true"]
+    name   = "vpc-id"
+    values = ["vpc-067449f8314d4e6c0"]
   }
 }
+
 
 # Security group for SSH, HTTP, and Node Exporter
 resource "aws_security_group" "ssh_http" {
