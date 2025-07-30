@@ -11,9 +11,9 @@ variable "instance_type" {
 }
 
 variable "key_name" {
-  default = "your-key-name"
+  default = "test.pem"
 }
 
 variable "private_key_path" {
-  default = "~/.ssh/your-key.pem"
+  default = "~/.ssh/test.pem"
 }
