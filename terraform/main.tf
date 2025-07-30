@@ -21,8 +21,8 @@ data "aws_subnet" "default" {
 }
 
 # Security group for SSH, HTTP, and Node Exporter
-resource "aws_security_group" "ssh_http1" {
-  name        = "allow_ssh_http1"
+resource "aws_security_group" "ssh_http" {
+  name        = "allow_ssh_http"
   description = "Allow SSH, HTTP, and Node Exporter"
   vpc_id      = data.aws_vpc.default.id
 
